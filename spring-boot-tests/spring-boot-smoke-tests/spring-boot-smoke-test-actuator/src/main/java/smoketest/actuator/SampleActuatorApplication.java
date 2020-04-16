@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 @ConfigurationPropertiesScan
 public class SampleActuatorApplication {
 
+	//这是整个程序的入口
 	public static void main(String[] args) {
 		SpringApplication.run(SampleActuatorApplication.class, args);
 	}
