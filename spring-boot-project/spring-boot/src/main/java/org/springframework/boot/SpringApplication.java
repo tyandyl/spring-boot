@@ -211,6 +211,7 @@ public class SpringApplication {
 
 	private Banner banner;
 
+	//资源加载器
 	private ResourceLoader resourceLoader;
 
 	private BeanNameGenerator beanNameGenerator;
@@ -240,33 +241,19 @@ public class SpringApplication {
 	private boolean lazyInitialization = false;
 
 	/**
-	 * Create a new {@link SpringApplication} instance. The application context will load
-	 * beans from the specified primary sources (see {@link SpringApplication class-level}
-	 * documentation for details. The instance can be customized before calling
-	 * {@link #run(String...)}.
-	 * @param primarySources the primary bean sources
-	 * @see #run(Class, String[])
-	 * @see #SpringApplication(ResourceLoader, Class...)
-	 * @see #setSources(Set)
+	 *
+	 * @param primarySources
 	 */
 	public SpringApplication(Class<?>... primarySources) {
 		this(null, primarySources);
 	}
 
-	/**
-	 * Create a new {@link SpringApplication} instance. The application context will load
-	 * beans from the specified primary sources (see {@link SpringApplication class-level}
-	 * documentation for details. The instance can be customized before calling
-	 * {@link #run(String...)}.
-	 * @param resourceLoader the resource loader to use
-	 * @param primarySources the primary bean sources
-	 * @see #run(Class, String[])
-	 * @see #setSources(Set)
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
+		//资源加载器，初始化时resourceLoader传的是null
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
+		//被传入的启动类
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
@@ -422,7 +409,13 @@ public class SpringApplication {
 
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		ClassLoader classLoader = getClassLoader();
-		// Use names and ensure unique to protect against duplicates
+		// 这里的type是ApplicationContextInitializer.class
+		//SpringFactoriesLoader.loadFactoryNames(ApplicationContextInitializer.class, classLoader)
+		// 这里的意思是类加载器查找ApplicationContextInitializer.class
+		/**
+		 *classLoader.getResources("META-INF/spring.factories") ，查看当前工程下的resources/META-INF/spring.factories
+		 * getResource不加“/”，会从工程的根目录，也就是截图里的target/classes这个路径下开始搜索资源，如果加上“/”，就会返回null。
+		 */
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
 		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
 		AnnotationAwareOrderComparator.sort(instances);
@@ -1227,11 +1220,11 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Static helper that can be used to run a {@link SpringApplication} from the
-	 * specified sources using default settings and user supplied arguments.
-	 * @param primarySources the primary sources to load
-	 * @param args the application arguments (usually passed from a Java main method)
-	 * @return the running {@link ApplicationContext}
+	 * 这是整个程序的入口
+	 *public static void main(String[] args) {
+	 *     SpringApplication.run(XX.class, args);
+	 * }
+	 * primarySources 就是上边的XX
 	 */
 	public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
 		return new SpringApplication(primarySources).run(args);

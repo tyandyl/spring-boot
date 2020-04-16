@@ -34,14 +34,14 @@ public enum WebApplicationType {
 	NONE,
 
 	/**
-	 * The application should run as a servlet-based web application and should start an
-	 * embedded servlet web server.
+	 * 应用程序应作为基于servlet的web应用程序运行，并应启动
+	 *嵌入式servlet web服务器。
 	 */
 	SERVLET,
 
 	/**
-	 * The application should run as a reactive web application and should start an
-	 * embedded reactive web server.
+	 * 应用程序应该作为反应性web应用程序运行，并应该启动
+	 * 嵌入式反应性web服务器
 	 */
 	REACTIVE;
 
